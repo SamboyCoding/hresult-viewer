@@ -3,6 +3,7 @@ import {ref, watch} from "vue";
 import win32errors from "../Win32Err";
 import sysErr from "../SysErr.ts";
 import clrErr from "../ClrErr.ts";
+import {facilityIds} from "../FacilityIds.ts";
 
 interface BitCategory {
     name: string;
@@ -64,96 +65,8 @@ const bitCategories: BitCategory[] = [
     }
 ];
 
-const facilityIds: {[key: number]: string} = {
-    0: 'FACILITY_NULL - General Purpose Errors',
-    1: 'FACILITY_RPC - Remote Procedure Call Errors',
-    2: 'FACILITY_DISPATCH - COM Dispatch Errors',
-    3: 'FACILITY_STORAGE - Object Linking and Embedding (OLE) Storage Errors',
-    4: 'FACILITY_ITF - COM/OLE Interface Errors',
-    7: 'FACILITY_WIN32 - Undecorated/Old Win32 Error Codes',
-    8: 'FACILITY_WINDOWS - Windows Internal Error Codes',
-    9: 'FACILITY_SECURITY - Security API Layer Errors',
-    10: 'FACILITY_CONTROL - Control Mechanism Errors',
-    11: 'FACILITY_CERT - Certificate Client/Server Errors',
-    12: 'FACILITY_INTERNET - Wininet-related Errors',
-    13: 'FACILITY_MEDIASERVER - Windows Media Server Errors',
-    14: 'FACILITY_MSMQ - Microsoft Message Queue Errors',
-    15: 'FACILITY_SETUPAPI - Windows Setup API (Installation) Errors',
-    16: 'FACILITY_SCARD - Smart Card Errors',
-    17: 'FACILITY_COMPLUS - COM+ Errors',
-    18: 'FACILITY_AAF - Microsoft Agent Errors',
-    19: 'FACILITY_URT - .NET Runtime Errors', //.NET CLR
-    20: 'FACILITY_ACS - Audit Collection Services Errors',
-    21: 'FACILITY_DPLAY - DirectPlay Errors',
-    22: 'FACILITY_UMI - Ubiquitous MemoryIntrospection Errors',
-    23: 'FACILITY_SXS - Side-by-Side Servicing Errors',
-    24: 'FACILITY_WINDOWS_CE - Windows CE Errors',
-    25: 'FACILITY_HTTP - HTTP Errors',
-    26: 'FACILITY_USERMODE_COMMONLOG - Usermode Common Logging Errors',
-    31: 'FACILITY_USERMODE_FILTER_MANAGER - Usermode Filter Manager Errors',
-    32: 'FACILITY_BACKGROUNDCOPY - Background Copy Control Errors',
-    33: 'FACILITY_CONFIGURATION - Configuration Services Errors',
-    34: 'FACILITY_STATE_MANAGEMENT - State Management Services Errors',
-    35: 'FACILITY_METADIRECTORY - Microsoft Identity Server Errors',
-    36: 'FACILITY_WINDOWSUPDATE - Windows Update Errors',
-    37: 'FACILITY_DIRECTORYSERVICE - Active Directory Errors',
-    38: 'FACILITY_GRAPHICS - Graphics (GPU) Driver Errors',
-    39: 'FACILITY_SHELL - User Shell Errors',
-    40: 'FACILITY_TPM_SERVICES - Trusted Platform Module Service Errors',
-    41: 'FACILITY_TPM_SOFTWARE - Trusted Platform Module Application Errors',
-    48: 'FACILITY_PLA - Performance Logs and Alerts Errors',
-    49: 'FACILITY_FVE - Full Volume Encryption Errors',
-    50: 'FACILITY_FWP - Firewall Platform Errors',
-    51: 'FACILITY_WINRM - Windows Resource Management Errors',
-    52: 'FACILITY_NDIS - Network Driver Interface Specification Errors',
-    53: 'FACILITY_USERMODE_HYPERVISOR - Usermode Hypervisor Errors',
-    54: 'FACILITY_CMI - Configuration Management Infrastructure Errors',
-    55: 'FACILITY_USERMODE_VIRTUALIZATION - Usermode Virtualization Subsystem Errors',
-    56: 'FACILITY_USERMODE_VOLMGR - Usermode Volume Manager Errors',
-    57: 'FACILITY_BCD - Boot Configuration Database Errors',
-    58: 'FACILITY_USERMODE_VHD - Usermode Virtual Hard Disk Errors',
-    60: 'FACILITY_SDIAG - System Diagnostic Errors',
-    61: 'FACILITY_WEBSERVICES - Web Services Errors',
-    80: 'FACILITY_WINDOWS_DEFENDER - Windows Defender Errors',
-    81: 'FACILITY_OPC - Open Connectivity Services Errors',
-    
-    //And some unconfirmed ones that appear online
-    29: 'FACILITY_XPS (Unconfirmed)',
-    30: 'FACILITY_MBN (Unconfirmed)',
-    42: 'FACILITY_RAS (Unconfirmed)',
-    43: 'FACILITY_METAPROGRAMMING (Unconfirmed)',
-    44: 'FACILITY_BLUETOOTH_ATT (Unconfirmed)',
-    45: 'FACILITY_AUDIO (Unconfirmed)',
-    46: 'FACILITY_STATISTICS (Unconfirmed)',
-    47: 'FACILITY_BTH_ATT (Unconfirmed)',
-    59: 'FACILITY_USERMODE_VSMB (Unconfirmed)',
-    62: 'FACILITY_WSBAPP (Unconfirmed)',
-    63: 'FACILITY_URS (Unconfirmed)',
-    64: 'FACILITY_DLS (Unconfirmed)',
-    65: 'FACILITY_BITLOCKER (Unconfirmed) - Believed to be BitLocker Drive Encryption Errors',
-    66: 'FACILITY_USB (Unconfirmed) - Believed to be USB Errors',
-    67: 'FACILITY_VISUALCPP (Unconfirmed) - Believed to be Visual C++ Errors',
-    68: 'FACILITY_USN (Unconfirmed)',
-    69: 'FACILITY_USERMODE_VOLSNAP (Unconfirmed)',
-    70: 'FACILITY_TIERING (Unconfirmed)',
-    71: 'FACILITY_WSB_ONLINE (Unconfirmed)',
-    72: 'FACILITY_ONLINE_ID (Unconfirmed)',
-    73: 'FACILITY_DEVICE_UPDATE_AGENT (Unconfirmed)',
-    74: 'FACILITY_DLSR (Unconfirmed)',
-    75: 'FACILITY_CLUSTERING (Unconfirmed)',
-    76: 'FACILITY_SIS (Unconfirmed)',
-    77: 'FACILITY_HSM (Unconfirmed)',
-    78: 'FACILITY_SRP (Unconfirmed)',
-    79: 'FACILITY_KTM (Unconfirmed)',
-    82: 'FACILITY_XBOX (Unconfirmed)',
-    83: 'FACILITY_XPS_DOCUMENT (Unconfirmed)',
-    84: 'FACILITY_GAMING (Unconfirmed)',
-    85: 'FACILITY_WMAAECMA (Unconfirmed)',
-    86: 'FACILITY_SPEECH (Unconfirmed)',
-    87: 'FACILITY_WEBAUTHN (Unconfirmed)',
-};
-
 const props = defineProps<{ hresult: string }>();
+const hresultParsed = ref<number>(0);
 const hresultBits = ref<number[]>([]);
 
 watch(props, (_) => {
@@ -172,8 +85,13 @@ function updateBits() {
     if (newHresult.startsWith('0x')) {
         hresultNumber = parseInt(newHresult, 16);
     } else {
-        hresultNumber = parseInt(newHresult, 2);
+        hresultNumber = parseInt(newHresult);
     }
+    
+    if (hresultNumber < 0)
+        hresultNumber = hresultNumber >>> 0; //Convert to unsigned
+    
+    hresultParsed.value = hresultNumber;
 
     //Convert to bits
     const bits = [];
@@ -305,7 +223,7 @@ updateBits();
         </div>
         
         <div id="hresult-description">
-            <span>Entered HRESULT: {{props.hresult}}</span>
+            <span>Entered HRESULT: 0x{{hresultParsed.toString(16)}}</span>
             <br/>
             <span>Facility (System Component Name): {{getFacilityNameAndDescription()}}</span>
             <br/>
