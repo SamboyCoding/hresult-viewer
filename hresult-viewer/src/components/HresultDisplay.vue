@@ -53,7 +53,7 @@ const bitCategories: BitCategory[] = [
         description: 'Facility (area of the system the error originated from)',
         start: 26,
         end: 16,
-        nameGetter: (value: number) => value + ' - ' + (facilityIds.hasOwnProperty(value) ? facilityIds[value] : 'Unknown')
+        nameGetter: (value: number) => getFacilityName(value)
     },
     {
         name: 'Code',
@@ -65,57 +65,57 @@ const bitCategories: BitCategory[] = [
 ];
 
 const facilityIds: {[key: number]: string} = {
-    0: 'FACILITY_NULL',
-    1: 'FACILITY_RPC',
-    2: 'FACILITY_DISPATCH',
-    3: 'FACILITY_STORAGE',
-    4: 'FACILITY_ITF',
-    7: 'FACILITY_WIN32',
-    8: 'FACILITY_WINDOWS',
-    9: 'FACILITY_SECURITY',
-    10: 'FACILITY_CONTROL',
-    11: 'FACILITY_CERT',
-    12: 'FACILITY_INTERNET',
-    13: 'FACILITY_MEDIASERVER',
-    14: 'FACILITY_MSMQ',
-    15: 'FACILITY_SETUPAPI',
-    16: 'FACILITY_SCARD',
-    17: 'FACILITY_COMPLUS',
-    18: 'FACILITY_AAF ("Microsoft Agent")',
-    19: 'FACILITY_URT (.NET Runtime)', //.NET CLR
-    20: 'FACILITY_ACS',
-    21: 'FACILITY_DPLAY',
-    22: 'FACILITY_UMI',
-    23: 'FACILITY_SXS',
-    24: 'FACILITY_WINDOWS_CE',
-    25: 'FACILITY_HTTP',
-    26: 'FACILITY_USERMODE_COMMONLOG',
-    31: 'FACILITY_USERMODE_FILTER_MANAGER',
-    32: 'FACILITY_BACKGROUNDCOPY',
-    33: 'FACILITY_CONFIGURATION',
-    34: 'FACILITY_STATE_MANAGEMENT',
-    35: 'FACILITY_METADIRECTORY',
-    36: 'FACILITY_WINDOWSUPDATE',
-    37: 'FACILITY_DIRECTORYSERVICE',
-    38: 'FACILITY_GRAPHICS',
-    39: 'FACILITY_SHELL',
-    40: 'FACILITY_TPM_SERVICES',
-    41: 'FACILITY_TPM_SOFTWARE',
-    48: 'FACILITY_PLA',
-    49: 'FACILITY_FVE',
-    50: 'FACILITY_FWP',
-    51: 'FACILITY_WINRM',
-    52: 'FACILITY_NDIS',
-    53: 'FACILITY_USERMODE_HYPERVISOR',
-    54: 'FACILITY_CMI',
-    55: 'FACILITY_USERMODE_VIRTUALIZATION',
-    56: 'FACILITY_USERMODE_VOLMGR',
-    57: 'FACILITY_BCD',
-    58: 'FACILITY_USERMODE_VHD',
-    60: 'FACILITY_SDIAG',
-    61: 'FACILITY_WEBSERVICES',
-    80: 'FACILITY_WINDOWS_DEFENDER',
-    81: 'FACILITY_OPC',
+    0: 'FACILITY_NULL - General Purpose Errors',
+    1: 'FACILITY_RPC - Remote Procedure Call Errors',
+    2: 'FACILITY_DISPATCH - COM Dispatch Errors',
+    3: 'FACILITY_STORAGE - Object Linking and Embedding (OLE) Storage Errors',
+    4: 'FACILITY_ITF - COM/OLE Interface Errors',
+    7: 'FACILITY_WIN32 - Undecorated/Old Win32 Error Codes',
+    8: 'FACILITY_WINDOWS - Windows Internal Error Codes',
+    9: 'FACILITY_SECURITY - Security API Layer Errors',
+    10: 'FACILITY_CONTROL - Control Mechanism Errors',
+    11: 'FACILITY_CERT - Certificate Client/Server Errors',
+    12: 'FACILITY_INTERNET - Wininet-related Errors',
+    13: 'FACILITY_MEDIASERVER - Windows Media Server Errors',
+    14: 'FACILITY_MSMQ - Microsoft Message Queue Errors',
+    15: 'FACILITY_SETUPAPI - Windows Setup API (Installation) Errors',
+    16: 'FACILITY_SCARD - Smart Card Errors',
+    17: 'FACILITY_COMPLUS - COM+ Errors',
+    18: 'FACILITY_AAF - Microsoft Agent Errors',
+    19: 'FACILITY_URT - .NET Runtime Errors', //.NET CLR
+    20: 'FACILITY_ACS - Audit Collection Services Errors',
+    21: 'FACILITY_DPLAY - DirectPlay Errors',
+    22: 'FACILITY_UMI - Ubiquitous MemoryIntrospection Errors',
+    23: 'FACILITY_SXS - Side-by-Side Servicing Errors',
+    24: 'FACILITY_WINDOWS_CE - Windows CE Errors',
+    25: 'FACILITY_HTTP - HTTP Errors',
+    26: 'FACILITY_USERMODE_COMMONLOG - Usermode Common Logging Errors',
+    31: 'FACILITY_USERMODE_FILTER_MANAGER - Usermode Filter Manager Errors',
+    32: 'FACILITY_BACKGROUNDCOPY - Background Copy Control Errors',
+    33: 'FACILITY_CONFIGURATION - Configuration Services Errors',
+    34: 'FACILITY_STATE_MANAGEMENT - State Management Services Errors',
+    35: 'FACILITY_METADIRECTORY - Microsoft Identity Server Errors',
+    36: 'FACILITY_WINDOWSUPDATE - Windows Update Errors',
+    37: 'FACILITY_DIRECTORYSERVICE - Active Directory Errors',
+    38: 'FACILITY_GRAPHICS - Graphics (GPU) Driver Errors',
+    39: 'FACILITY_SHELL - User Shell Errors',
+    40: 'FACILITY_TPM_SERVICES - Trusted Platform Module Service Errors',
+    41: 'FACILITY_TPM_SOFTWARE - Trusted Platform Module Application Errors',
+    48: 'FACILITY_PLA - Performance Logs and Alerts Errors',
+    49: 'FACILITY_FVE - Full Volume Encryption Errors',
+    50: 'FACILITY_FWP - Firewall Platform Errors',
+    51: 'FACILITY_WINRM - Windows Resource Management Errors',
+    52: 'FACILITY_NDIS - Network Driver Interface Specification Errors',
+    53: 'FACILITY_USERMODE_HYPERVISOR - Usermode Hypervisor Errors',
+    54: 'FACILITY_CMI - Configuration Management Infrastructure Errors',
+    55: 'FACILITY_USERMODE_VIRTUALIZATION - Usermode Virtualization Subsystem Errors',
+    56: 'FACILITY_USERMODE_VOLMGR - Usermode Volume Manager Errors',
+    57: 'FACILITY_BCD - Boot Configuration Database Errors',
+    58: 'FACILITY_USERMODE_VHD - Usermode Virtual Hard Disk Errors',
+    60: 'FACILITY_SDIAG - System Diagnostic Errors',
+    61: 'FACILITY_WEBSERVICES - Web Services Errors',
+    80: 'FACILITY_WINDOWS_DEFENDER - Windows Defender Errors',
+    81: 'FACILITY_OPC - Open Connectivity Services Errors',
     
     //And some unconfirmed ones that appear online
     29: 'FACILITY_XPS (Unconfirmed)',
@@ -130,9 +130,9 @@ const facilityIds: {[key: number]: string} = {
     62: 'FACILITY_WSBAPP (Unconfirmed)',
     63: 'FACILITY_URS (Unconfirmed)',
     64: 'FACILITY_DLS (Unconfirmed)',
-    65: 'FACILITY_BITLOCKER (Unconfirmed)',
-    66: 'FACILITY_USB (Unconfirmed)',
-    67: 'FACILITY_VISUALCPP (Unconfirmed)',
+    65: 'FACILITY_BITLOCKER (Unconfirmed) - Believed to be BitLocker Drive Encryption Errors',
+    66: 'FACILITY_USB (Unconfirmed) - Believed to be USB Errors',
+    67: 'FACILITY_VISUALCPP (Unconfirmed) - Believed to be Visual C++ Errors',
     68: 'FACILITY_USN (Unconfirmed)',
     69: 'FACILITY_USERMODE_VOLSNAP (Unconfirmed)',
     70: 'FACILITY_TIERING (Unconfirmed)',
@@ -160,6 +160,10 @@ watch(props, (_) => {
     updateBits();
 });
 
+function reverse(arr: any[]): any[] {
+    return arr.slice().reverse();
+}
+
 function updateBits() {
     const newHresult = props.hresult;
 
@@ -181,7 +185,7 @@ function updateBits() {
 }
 
 function getErrorCodeString(code: number): string {
-    const currentFacility = parseInt(hresultBits.value.toReversed().slice(16, 26).toReversed().join(''), 2);
+    const currentFacility = parseInt(reverse(reverse(hresultBits.value).slice(16, 26)).join(''), 2);
 
     if (currentFacility == 0) { //FACILITY_NULL
         let sysErrorCode = sysErr.hasOwnProperty(code) ? sysErr[code] : 'Unknown';
@@ -220,8 +224,8 @@ function getErrorCodeString(code: number): string {
 }
 
 function getErrorCodeIncludingDescription(): string {
-    const currentFacility = parseInt(hresultBits.value.toReversed().slice(16, 26).toReversed().join(''), 2);
-    const code = parseInt(hresultBits.value.toReversed().slice(0, 16).toReversed().join(''), 2);
+    const currentFacility = parseInt(reverse(reverse(hresultBits.value).slice(16, 26)).join(''), 2);
+    const code = parseInt(reverse(reverse(hresultBits.value).slice(0, 15)).join(''), 2);
 
     if (currentFacility == 0) { //FACILITY_NULL
         return sysErr.hasOwnProperty(code) ? sysErr[code] : 'Unknown';
@@ -238,15 +242,25 @@ function getErrorCodeIncludingDescription(): string {
     return `Unknown error code ${code} (0x${code.toString(16)})`;
 }
 
-function getFacilityName(): string {
-    const facilityId = parseInt(hresultBits.value.toReversed().slice(16, 26).toReversed().join(''), 2);
+function getFacilityName(facilityId: number): string {
+    let facilityName = facilityIds.hasOwnProperty(facilityId) ? facilityIds[facilityId] : 'Unknown';
+    
+    if(facilityName.includes('-')) {
+        //Remove the description and just show the code
+        facilityName = facilityName.split(' - ')[0];
+    }
+    
+    return facilityId + ' - ' + facilityName;
+}
+
+function getFacilityNameAndDescription(): string {
+    const facilityId = parseInt(reverse(reverse(hresultBits.value).slice(16, 26)).join(''), 2);
 
     return facilityIds.hasOwnProperty(facilityId) ? facilityIds[facilityId] : 'Unknown';
 }
 
 function getCategoryValue(category: BitCategory): string {
-    //@ts-ignore - Typescript isn't picking up types for toReversed even though I declare ES2023.Array
-    const categoryValueInt = parseInt(hresultBits.value.toReversed().slice(category.end, category.start + 1).toReversed().join(''), 2);
+    const categoryValueInt = parseInt(reverse(reverse(hresultBits.value).slice(category.end, category.start + 1)).join(''), 2);
     
     if (category.nameGetter) {
         return category.nameGetter(categoryValueInt);
@@ -293,7 +307,7 @@ updateBits();
         <div id="hresult-description">
             <span>Entered HRESULT: {{props.hresult}}</span>
             <br/>
-            <span>Facility (System Component Name): {{getFacilityName()}}</span>
+            <span>Facility (System Component Name): {{getFacilityNameAndDescription()}}</span>
             <br/>
             <span>Error Description (if known): {{getErrorCodeIncludingDescription()}}</span>
         </div>
