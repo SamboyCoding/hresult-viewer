@@ -1,4 +1,6 @@
-﻿const clrErr: { [key: number]: string } = {
+﻿import {FacilityCodeMap} from "./KnownCodes.ts";
+
+const clrErr: FacilityCodeMap = {
     0x2: "COR_E_FILENOTFOUND - File not found",
     0x3: "COR_E_DIRECTORYNOTFOUND - Directory not found",
     

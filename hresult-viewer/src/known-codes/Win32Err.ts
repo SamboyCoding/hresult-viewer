@@ -1,4 +1,6 @@
-﻿const win32Err: {[key: number]: string} = {
+﻿import {FacilityCodeMap} from "./KnownCodes.ts";
+
+const win32Err: FacilityCodeMap = {
     0x00000000: "ERROR_SUCCESS - The operation completed successfully.",
     0x00000001: "ERROR_INVALID_FUNCTION - Incorrect function.",
     0x00000002: "ERROR_FILE_NOT_FOUND - The system cannot find the file specified.",
@@ -2582,7 +2584,7 @@
     0x000036DB: "ERROR_SXS_XML_E_INCOMPLETE_ENCODING - Manifest Parse Error: End of file reached in invalid state for current encoding.",
     0x000036DC: "ERROR_SXS_XML_E_MISSING_PAREN - Manifest Parse Error: Missing parenthesis.",
     0x000036DD: "ERROR_SXS_XML_E_EXPECTINGCLOSEQUOTE - Manifest Parse Error: A single (') or double (\") quotation mark is missing.",
-0x000036DE: "ERROR_SXS_XML_E_MULTIPLE_COLONS - Manifest Parse Error: Multiple colons are not allowed in a name.",
+    0x000036DE: "ERROR_SXS_XML_E_MULTIPLE_COLONS - Manifest Parse Error: Multiple colons are not allowed in a name.",
     0x000036DF: "ERROR_SXS_XML_E_INVALID_DECIMAL - Manifest Parse Error: Invalid character for decimal digit.",
     0x000036E0: "ERROR_SXS_XML_E_INVALID_HEXIDECIMAL - Manifest Parse Error: Invalid character for hexadecimal digit.",
     0x000036E1: "ERROR_SXS_XML_E_INVALID_UNICODE - Manifest Parse Error: Invalid Unicode character value for this platform.",

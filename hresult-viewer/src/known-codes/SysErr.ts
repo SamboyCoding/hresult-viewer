@@ -1,4 +1,6 @@
-﻿const sysErr: {[key: number]: string} = {
+﻿import {FacilityCodeMap} from "./KnownCodes.ts";
+
+const sysErr: FacilityCodeMap = {
     0x0: "ERROR_SUCCESS - The operation completed successfully.",
     0x1: "ERROR_INVALID_FUNCTION - Incorrect function.",
     0x2: "ERROR_FILE_NOT_FOUND - The system cannot find the file specified.",

@@ -1,8 +1,6 @@
 ﻿<script setup lang="ts">
 import {ref, watch} from "vue";
-import win32errors from "../Win32Err";
-import sysErr from "../SysErr.ts";
-import clrErr from "../ClrErr.ts";
+import {FacilityErrCodes} from "../known-codes/KnownCodes.ts";
 import {facilityIds} from "../FacilityIds.ts";
 
 interface BitCategory {
@@ -13,46 +11,49 @@ interface BitCategory {
     nameGetter?: (value: number) => string;
 }
 
+//These used to be different. There were 5 bits before the facility, with 2 reserved, and an N bit.
+//But as of winerror.h from 10.0.22621.0, it's 2 bits for severity, 1 bit for customer, 1 bit reserved, 12 bits for facility, 16 bits for code
+//Technically that file claims that COM APIs still use the old format, but in practice it's probably not worth supporting that
+//(especially as the output is likely the same for what matters)
 const bitCategories: BitCategory[] = [
     {
-        name: 'S',
-        description: 'Severity (OK or ER for Error)',
+        name: 'SEV',
+        description: 'Severity (OK/INFO/WARN/ERROR)',
         start: 31,
-        end: 31,
-        nameGetter: (value: number) => value == 0 ? 'OK' : 'ER'
-    },
-    {
-        name: 'R',
-        description: 'Reserved - should be 0',
-        start: 30,
         end: 30,
-        nameGetter: (value: number) => value == 0 ? '-' : 'Reserved'
+        nameGetter: (value: number) => {
+          switch(value) {
+            case 0b00:
+              return 'OK';
+            case 0b01:
+              return 'INFO';
+            case 0b10:
+              return 'WARN';
+            case 0b11:
+              return 'ERROR';
+            default:
+              return 'UNK';
+          }
+        }
     },
     {
         name: 'C',
-        description: 'Customer (Microsoft, M, or Custom, C)',
+        description: 'Customer (1) or Microsoft (0)',
         start: 29,
         end: 29,
         nameGetter: (value: number) => value == 0 ? 'M' : 'C'
     },
     {
-        name: 'N',
-        description: 'Does this HRESULT represent an entry in the NTSTATUS enum?',
+        name: 'R',
+        description: 'Reserved - should be 0',
         start: 28,
         end: 28,
-        nameGetter: (value: number) => value == 0 ? 'NO' : 'YES'
-    },
-    {
-        name: 'X',
-        description: 'Reserved - should be 0',
-        start: 27,
-        end: 27,
-        nameGetter: (value: number) => value == 0 ? '-' : 'Reserved'
+        nameGetter: (value: number) => value == 0 ? '-' : 'X'
     },
     {
         name: 'Facility',
         description: 'Facility (area of the system the error originated from)',
-        start: 26,
+        start: 27,
         end: 16,
         nameGetter: (value: number) => getFacilityName(value)
     },
@@ -80,12 +81,17 @@ function reverse(arr: any[]): any[] {
 function updateBits() {
     const newHresult = props.hresult;
 
-    //Could be in hex or binary, so we need to check
+    //Could be in hex or decimal, so we need to check
     let hresultNumber: number;
     if (newHresult.startsWith('0x')) {
         hresultNumber = parseInt(newHresult, 16);
     } else {
         hresultNumber = parseInt(newHresult);
+
+        //Check for hex without leading 0x
+        if(isNaN(hresultNumber) || hresultNumber.toString() !== newHresult) {
+            hresultNumber = parseInt(newHresult, 16);
+        }
     }
     
     if (hresultNumber < 0)
@@ -103,61 +109,38 @@ function updateBits() {
 }
 
 function getErrorCodeString(code: number): string {
-    const currentFacility = parseInt(reverse(reverse(hresultBits.value).slice(16, 26)).join(''), 2);
+    const currentFacility = parseInt(reverse(reverse(hresultBits.value).slice(16, 28)).join(''), 2);
 
-    if (currentFacility == 0) { //FACILITY_NULL
-        let sysErrorCode = sysErr.hasOwnProperty(code) ? sysErr[code] : 'Unknown';
-        
-        if(sysErrorCode.includes('-')) {
+    if(FacilityErrCodes.hasOwnProperty(currentFacility)) {
+        const errCodesForThisFacility = FacilityErrCodes[currentFacility];
+
+        let errorText = errCodesForThisFacility.hasOwnProperty(code) ? errCodesForThisFacility[code] : 'Unknown';
+
+        if(errorText.includes('-')) {
             //Remove the description and just show the code
-            sysErrorCode = sysErrorCode.split(' - ')[0];
+            errorText = errorText.split(' - ')[0];
         }
-        
-        return `0x${code.toString(16)} - ${sysErrorCode}`;
+
+        return `0x${code.toString(16)} - ${errorText}`;
     }
 
-    if (currentFacility == 7) { //FACILITY_WIN32
-        let win32ErrorCode = win32errors.hasOwnProperty(code) ? win32errors[code] : 'Unknown';
-        
-        if (win32ErrorCode.includes('-')) {
-            //Remove the description and just show the code
-            win32ErrorCode = win32ErrorCode.split(' - ')[0];
-        }
-        
-        return `0x${code.toString(16)} - ${win32ErrorCode}`;
-    }
-    
-    if(currentFacility == 19) { //FACILITY_URT (.NET Runtime)
-        let netErrorCode = clrErr.hasOwnProperty(code) ? clrErr[code] : 'Unknown';
-        
-        if (netErrorCode.includes('-')) {
-            //Remove the description and just show the code
-            netErrorCode = netErrorCode.split(' - ')[0];
-        }
-        
-        return `0x${code.toString(16)} - ${netErrorCode}`;
-    }
-
+    //We don't have a list of error codes for this facility
     return `${code} (0x${code.toString(16)})`;
 }
 
 function getErrorCodeIncludingDescription(): string {
-    const currentFacility = parseInt(reverse(reverse(hresultBits.value).slice(16, 26)).join(''), 2);
+    const currentFacility = parseInt(reverse(reverse(hresultBits.value).slice(16, 28)).join(''), 2);
     const code = parseInt(reverse(reverse(hresultBits.value).slice(0, 15)).join(''), 2);
 
-    if (currentFacility == 0) { //FACILITY_NULL
-        return sysErr.hasOwnProperty(code) ? sysErr[code] : 'Unknown';
+    if(FacilityErrCodes.hasOwnProperty(currentFacility)) {
+        const errCodesForThisFacility = FacilityErrCodes[currentFacility];
+
+        let errorText = errCodesForThisFacility.hasOwnProperty(code) ? errCodesForThisFacility[code] : 'Unknown';
+
+        return `0x${code.toString(16)} - ${errorText}`;
     }
 
-    if (currentFacility == 7) { //FACILITY_WIN32
-        return win32errors.hasOwnProperty(code) ? win32errors[code] : 'Unknown';
-    }
-    
-    if(currentFacility == 19) { //FACILITY_URT (.NET Runtime)
-        return clrErr.hasOwnProperty(code) ? clrErr[code] : 'Unknown';
-    }
-
-    return `Unknown error code ${code} (0x${code.toString(16)})`;
+    return `Error ${code} (0x${code.toString(16)}) - there are no known documented codes for this facility`;
 }
 
 function getFacilityName(facilityId: number): string {
@@ -172,7 +155,7 @@ function getFacilityName(facilityId: number): string {
 }
 
 function getFacilityNameAndDescription(): string {
-    const facilityId = parseInt(reverse(reverse(hresultBits.value).slice(16, 26)).join(''), 2);
+    const facilityId = parseInt(reverse(reverse(hresultBits.value).slice(16, 28)).join(''), 2);
 
     return facilityIds.hasOwnProperty(facilityId) ? facilityIds[facilityId] : 'Unknown';
 }

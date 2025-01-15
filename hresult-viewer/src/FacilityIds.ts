@@ -1,4 +1,6 @@
-﻿export const facilityIds: { [key: number]: string } = {
+﻿import {FacilityCodeMap} from "./known-codes/KnownCodes.ts";
+
+export const facilityIds: FacilityCodeMap = {
     0: 'FACILITY_NULL - General Purpose Errors',
     1: 'FACILITY_RPC - Remote Procedure Call Errors',
     2: 'FACILITY_DISPATCH - COM Dispatch Errors',
@@ -59,9 +61,10 @@
     62: 'FACILITY_WPN - Windows Push Notifications Errors',
     63: 'FACILITY_WINDOWS_STORE - Windows Store Errors',
     64: 'FACILITY_INPUT - Input Method Editor Errors',
-    
+    65: 'FACILITY_QUIC - QUIC Errors',
     66: 'FACILITY_EAP - Extensible Authentication Protocol Errors',
-    
+
+    70: 'FACILITY_IORING - IO Ring Errors',
     
     80: 'FACILITY_WINDOWS_DEFENDER - Windows Defender Errors',
     81: 'FACILITY_OPC - Open Connectivity Services Errors',
@@ -75,8 +78,8 @@
     100: 'FACILITY_DAF - Believed to be Device Association Framework Errors',
     101: 'FACILITY_BLUETOOTH_ATT - Bluetooth Attribute Protocol Errors',
     102: 'FACILITY_AUDIO - Audio Errors',
-    
-    
+    103: 'FACILITY_STATEREPOSITORY - State Repository Errors',
+
     109: 'FACILITY_VISUALCPP - Visual C++ Errors',
     
     112: 'FACILITY_SCRIPT - Scripting Errors of some kind?',
@@ -93,20 +96,25 @@
     
     133: 'FACILITY_WSB_ONLINE - Windows Server Backup Online Errors',
     134: 'FACILITY_ONLINE_ID - Online ID (Microsoft Account?) Errors',
+    135: 'FACILITY_DEVICE_UPDATE_AGENT - Device Update Agent Errors',
+    136: 'FACILITY_DRVSERVICING - Driver Servicing Errors',
     
     153: 'FACILITY_DLS - Possibly Windows Server Deployment Services?',
     
     160: 'FACILITY_SOS - Possibly SOS Debugger for .NET Framework?',
-    
+
+    173: 'FACILITY_OCP_UPDATE_AGENT - OCP Update Agent(?) Errors',
+
     176: 'FACILITY_DEBUGGERS - Debugging Errors',
     
     208: 'FACILITY_DELIVERY_OPTIMIZATION - Windows Update Delivery Optimization Errors',
     
     231: 'FACILITY_USERMODE_SPACES - Storage Spaces Errors',
     232: 'FACILITY_USER_MODE_SECURITY_CORE - User Mode Security Core Errors',
+
     234: 'FACILITY_USERMODE_LICENSING - User Mode Licensing (CLiP Licensing?) Errors',
     
-    256: 'FACILITY_DMSERVER - Belived to be Logical Disk Manager Errors',
+    256: 'FACILITY_DMSERVER - Believed to be Logical Disk Manager Errors', //Also FACILITY_SPP and FACILITY_RESTORE
     257: 'FACILITY_DEPLOYMENT_SERVICES_SERVER - Windows Deployment Services Server Errors',
     258: 'FACILITY_DEPLOYMENT_SERVICES_IMAGING - Windows Deployment Services Imaging Errors',
     259: 'FACILITY_DEPLOYMENT_SERVICES_MANAGEMENT - Windows Deployment Services Management Errors',
@@ -124,6 +132,9 @@
     290: 'FACILITY_DEPLOYMENT_SERVICES_MULTICAST_CLIENT - Windows Deployment Services Multicast Client Errors',
     
     293: 'FACILITY_DEPLOYMENT_SERVICES_CONTENT_PROVIDER - Windows Deployment Services Content Provider Errors',
+
+    296: 'FACILITY_HSP_SERVICES - HSP(?) Errors',
+    297: 'FACILITY_HSP_SOFTWARE - HSP(?) Software Errors',
     
     305: 'FACILITY_LINGUISTIC_SERVICES - Linguistic Services Errors',
     
@@ -131,12 +142,15 @@
     886: 'FACILITY_WEB_SOCKET - Websocket Errors',
     
     1094: 'FACILITY_AUDIOSTREAMING - Audio Streaming Errors',
+
+    1490: 'FACILITY_TTD - Potentially Time Travel Debugging Errors?',
     
     1536: 'FACILITY_ACCELERATOR - Accelerator(?) Errors',
     
     1793: 'FACILITY_MOBILE - Mobile Errors',
     
     1967: 'FACILITY_SQLITE - SQLite Errors',
+    1968: 'FACILITY_SERVICE_FABRIC - Service Fabric Errors',
     
     1989: 'FACILITY_UTC - Connected User Experiences and Telemetry (DiagTrack) Errors',
     
@@ -144,7 +158,8 @@
     
     2049: 'FACILITY_WEP - Windows Encryption Provider Errors',
     2050: 'FACILITY_SYNCENGINE - Windows Sync Engine (OneDrive etc) Errors',
-    
+
+    2166: 'FACILITY_D3DDDI - Direct3D Display Driver Interface Errors',
     2168: 'FACILITY_DIRECTMUSIC - DirectMusic Errors',
     2169: 'FACILITY_DIRECT3D10 - Direct3D 10.0 Errors',
     2170: 'FACILITY_DXGI - DirectX Graphics Infrastructure Errors',
@@ -153,9 +168,13 @@
     2173: 'FACILITY_DIRECT3D11_DEBUG - Direct3D 11.0 Debug Errors',
     2174: 'FACILITY_DIRECT3D12 - Direct3D 12.0 Errors',
     2175: 'FACILITY_DIRECT3D12_DEBUG - Direct3D 12.0 Debug Errors',
+    2176: 'FACILITY_DXCORE - DirectX Core Errors',
+    2177: 'FACILITY_PRESENTATION - Presentation(?) Errors',
     
     2184: 'FACILITY_LEAP - XAudio2 Internal Errors',
     2185: 'FACILITY_AUDCLNT - Audio Client Errors',
+
+    2192: 'FACILITY_WINML - Possibly Windows Machine Learning Errors?',
     
     2200: 'FACILITY_WINCODEC_DWRITE_DWM - Windows DirectWrite Desktop Window Manager Errors',
     2201: 'FACILITY_DIRECT2D - Direct2D Errors',
@@ -165,6 +184,9 @@
     2306: 'FACILITY_JSCRIPT - Javascript Errors',
     
     2339: 'FACILITY_XBOX - Xbox Errors',
+    2340: 'FACILITY_GAME - Game Errors',
     
     2561: 'FACILITY_PIDGENX - Windows Product Activation Errors',
+
+    2748: 'FACILITY_PIX - PIX Performance Tuning Errors',
 };
