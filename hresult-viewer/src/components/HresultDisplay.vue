@@ -130,7 +130,7 @@ function getErrorCodeString(code: number): string {
 
 function getErrorCodeIncludingDescription(): string {
     const currentFacility = parseInt(reverse(reverse(hresultBits.value).slice(16, 28)).join(''), 2);
-    const code = parseInt(reverse(reverse(hresultBits.value).slice(0, 15)).join(''), 2);
+    const code = parseInt(reverse(reverse(hresultBits.value).slice(0, 16)).join(''), 2);
 
     if(FacilityErrCodes.hasOwnProperty(currentFacility)) {
         const errCodesForThisFacility = FacilityErrCodes[currentFacility];
